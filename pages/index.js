@@ -1,14 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Navbar from '../components/Navbar';
 import PromptsGuide from '../components/PromptsGuide';
 import CostingSheet from '../components/CostingSheet';
 import InputForm from '../components/InputForm';
+import { useRouter } from 'next/router';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Home() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [costingData, setCostingData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+    }
+  }, [user, router]);
+
+  if (!user) {
+    return null; // or a loading spinner
+  }
 
   const handleSubmit = async (prompt, zipcode, serviceType) => {
     setIsLoading(true);
